@@ -23,6 +23,19 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
   return reply, nil
 }
 
+func (s *server) GetTimeDelta(ctx context.Context, in *pb.TimeRequest) (*pb.TimeReply, error) {
+  serverTime := time.Now().UnixNano()
+  clientTime := in.ClientTime
+  delta := serverTime - clientTime
+
+  s.logger.LogRPC("GetTimeDelta", "")
+  return &pb.TimeReply{
+    ServerTime: serverTime,
+    ClientTime: clientTime,
+    Delta: delta,
+  }, nil
+}
+
 func loggingInterceptor(logger *logging.Logger) grpc.UnaryServerInterceptor {
   return func (ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface {}, error) {
     start := time.Now()
