@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Greeter_SayHello_FullMethodName     = "/greeter.Greeter/SayHello"
 	Greeter_GetTimeDelta_FullMethodName = "/greeter.Greeter/GetTimeDelta"
+	Greeter_SearchLDAP_FullMethodName   = "/greeter.Greeter/SearchLDAP"
+	Greeter_AddLDAP_FullMethodName      = "/greeter.Greeter/AddLDAP"
 )
 
 // GreeterClient is the client API for Greeter service.
@@ -29,6 +31,8 @@ const (
 type GreeterClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	GetTimeDelta(ctx context.Context, in *TimeRequest, opts ...grpc.CallOption) (*TimeReply, error)
+	SearchLDAP(ctx context.Context, in *LDAPSearchRequest, opts ...grpc.CallOption) (*LDAPSearchReply, error)
+	AddLDAP(ctx context.Context, in *LDAPAddRequest, opts ...grpc.CallOption) (*LDAPAddReply, error)
 }
 
 type greeterClient struct {
@@ -59,12 +63,34 @@ func (c *greeterClient) GetTimeDelta(ctx context.Context, in *TimeRequest, opts 
 	return out, nil
 }
 
+func (c *greeterClient) SearchLDAP(ctx context.Context, in *LDAPSearchRequest, opts ...grpc.CallOption) (*LDAPSearchReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LDAPSearchReply)
+	err := c.cc.Invoke(ctx, Greeter_SearchLDAP_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) AddLDAP(ctx context.Context, in *LDAPAddRequest, opts ...grpc.CallOption) (*LDAPAddReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LDAPAddReply)
+	err := c.cc.Invoke(ctx, Greeter_AddLDAP_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility.
 type GreeterServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	GetTimeDelta(context.Context, *TimeRequest) (*TimeReply, error)
+	SearchLDAP(context.Context, *LDAPSearchRequest) (*LDAPSearchReply, error)
+	AddLDAP(context.Context, *LDAPAddRequest) (*LDAPAddReply, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -80,6 +106,12 @@ func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*Hel
 }
 func (UnimplementedGreeterServer) GetTimeDelta(context.Context, *TimeRequest) (*TimeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTimeDelta not implemented")
+}
+func (UnimplementedGreeterServer) SearchLDAP(context.Context, *LDAPSearchRequest) (*LDAPSearchReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchLDAP not implemented")
+}
+func (UnimplementedGreeterServer) AddLDAP(context.Context, *LDAPAddRequest) (*LDAPAddReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddLDAP not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 func (UnimplementedGreeterServer) testEmbeddedByValue()                 {}
@@ -138,6 +170,42 @@ func _Greeter_GetTimeDelta_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_SearchLDAP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LDAPSearchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).SearchLDAP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_SearchLDAP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).SearchLDAP(ctx, req.(*LDAPSearchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_AddLDAP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LDAPAddRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).AddLDAP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_AddLDAP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).AddLDAP(ctx, req.(*LDAPAddRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +220,14 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTimeDelta",
 			Handler:    _Greeter_GetTimeDelta_Handler,
+		},
+		{
+			MethodName: "SearchLDAP",
+			Handler:    _Greeter_SearchLDAP_Handler,
+		},
+		{
+			MethodName: "AddLDAP",
+			Handler:    _Greeter_AddLDAP_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
