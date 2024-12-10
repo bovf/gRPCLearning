@@ -41,14 +41,18 @@ func main() {
 
   if *addLDAP {
     if flag.NArg() < 2 {
-        log.Fatal("Usage: --add-ldap <dn> <attr1=value1> <attr2=value2> ...")
+      log.Fatal("Usage: --add-ldap <dn> <attr1=value1> <attr2=value2> ...")
     }
     dn := flag.Arg(0)
     attrs := make(map[string]*pb.LDAPAttribute)
+    
+    // Add objectClass attribute automatically
+    attrs["objectClass"] = &pb.LDAPAttribute{Values: []string{"top", "person", "organizationalPerson", "inetOrgPerson"}}
+    
     for _, arg := range flag.Args()[1:] {
       parts := strings.SplitN(arg, "=", 2)
       if len(parts) != 2 {
-        log.Fatalf("Invalid attribute format: %s", arg)
+          log.Fatalf("Invalid attribute format: %s", arg)
       }
       attrs[parts[0]] = &pb.LDAPAttribute{Values: []string{parts[1]}}
     }
@@ -62,7 +66,7 @@ func main() {
     } else {
       fmt.Printf("Failed to add LDAP entry: %s\n", reply.Error)
     }
-  } 
+  }
   if *searchLDAP {
     if flag.NArg() != 3 {
       log.Fatal("Usage: --search-ldap <baseDN> <filter> <attr1,attr2,...>")

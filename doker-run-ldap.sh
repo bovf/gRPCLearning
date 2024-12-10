@@ -18,7 +18,6 @@ docker run --name my-openldap -p 389:389 -p 636:636 \
   --env LDAP_READONLY_USER_PASSWORD=readonlypassword \
   --env LDAP_EXTRA_SCHEMAS=cosine,inetorgperson \
   --env LDAP_CONFIG_PASSWORD=configpassword \
-  --volume /path/to/custom/slapd.conf:/etc/ldap/slapd.conf \
   --detach osixia/openldap:1.5.0
 
 if [ $? -eq 0 ]; then

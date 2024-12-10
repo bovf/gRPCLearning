@@ -16,6 +16,11 @@ func NewLDAPClient(addr string) (*LDAPClient, error) {
   if err != nil {
     logger.Fatalf("Failed to connect to LDAP: %v",err)
   }
+
+  err = conn.Bind("cn=admin, dc=mycompany,dc=com", "adminpassword")
+  if err != nil {
+    logger.Fatalf("Failed to bind to LDAP %v", err)
+  }
   return &LDAPClient{
     conn: conn, 
     logger: logger,
